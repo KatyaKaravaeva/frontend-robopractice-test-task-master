@@ -71,3 +71,27 @@ button {
   padding: unset;
   cursor: pointer;
 }
+
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.pagination-select{
+  display: flex;
+  margin-right: 20px;
+}
+
+.pagination-page{
+  display: flex;
+}
+
+.pagination-page button {
+  margin-left: 10px;
+  background-color: gray;
+  color: white;
+  border-radius: 20px;
+  padding: 5px;
+  width: 50px;
+}

@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import "../../assets/styles/table.css";
 
 const Table = () => {
   const [search, setSearch] = useState("");
-  const [pagination, setPagination] = useState({limit: 10, page: 1});
+  const [pagination, setPagination] = useState({ limit: 10, page: 1 });
   const [sortTable, setSortTable] = useState(false);
 
   const { table } = useSelector((state) => state.table);
@@ -21,14 +21,21 @@ const Table = () => {
     return hours + ":" + minutes;
   };
 
-  const checkSearch = (row) => {
+  const checkSearch = (row, index) => {
     if (row.Fullname.toLowerCase().indexOf(search.toLowerCase()) !== -1) {
-      return (<tr key={row.id}>
-        <td>{row.Fullname}</td>
-        {recieveTable(row.Days)}
-      </tr>)
+      //console.log(pagination.limit * (pagination.page - 1));
+      if (
+        index <= pagination.limit * pagination.page &&
+        index >= pagination.limit * (pagination.page - 1)
+      )
+        return (
+          <tr key={row.id}>
+            <td>{row.Fullname}</td>
+            {recieveTable(row.Days)}
+          </tr>
+        );
     }
-    return <></>
+    return <></>;
   };
 
   const recieveTable = (days) => {
@@ -37,13 +44,13 @@ const Table = () => {
     let totalMin = 0;
     for (let day = 1; day <= 31; ++day) {
       let flag = false;
-      days.map((time) => {
+      days.map((time, index) => {
         if (Number(time.Date.split("-").pop()) == day) {
           flag = true;
           let timeRecieve = getTime(time.End, time.Start, time.Date);
           totalHours += Number(timeRecieve.split(":")[0]);
           totalMin += Number(timeRecieve.split(":")[1]);
-          return layout.push(<td> {timeRecieve}</td>);
+          return layout.push(<td key={index}> {timeRecieve}</td>);
         }
       });
       if (!flag) {
@@ -59,8 +66,22 @@ const Table = () => {
   };
 
   const sortTableName = () => {
-    return sortTable ? setSortTable(false) : setSortTable(true)   
-  }
+    return sortTable ? setSortTable(false) : setSortTable(true);
+  };
+
+  const changeLimitPagination = (target) => {
+    setPagination({
+      ...pagination,
+      limit: Number(target.value),
+    });
+  };
+
+  const changePageCount = (valPage) => {
+    setPagination({
+      ...pagination,
+      page: pagination.page + valPage,
+    });
+  };
 
   return (
     <>
@@ -72,15 +93,53 @@ const Table = () => {
       <table>
         <thead>
           <tr>
-            <td><button onClick={() => sortTableName()}><div>User</div></button></td>
+            <td>
+              <button onClick={() => sortTableName()}>
+                <div>User</div>
+              </button>
+            </td>
             {[...Array(31)].map((x, ind) => (
-              <td><div>{++ind}</div></td>
+              <td key={ind}>
+                <div>{++ind}</div>
+              </td>
             ))}
-            <td><div>Monthly</div></td>
+            <td>
+              <div>Monthly</div>
+            </td>
           </tr>
         </thead>
-        <tbody>{table.map((row) => checkSearch(row))}</tbody>
+        <tbody>{table.map((row, index) => checkSearch(row, index))}</tbody>
       </table>
+      <div className="pagination">
+        <div className="pagination-select">
+          <p>Rows per page:</p>
+          <select onChange={(e) => changeLimitPagination(e.target)}>
+            <option value={10}>10</option>
+            <option value={15}>15</option>
+            <option value={20}>20</option>
+          </select>
+        </div>
+        <div className="pagination-page">
+          <p>
+            {pagination.limit * (pagination.page - 1) + 1} -{" "}
+            {pagination.limit * pagination.page} of {table.length}
+          </p>
+          <button
+            onClick={() => (pagination.page > 1 ? changePageCount(-1) : "")}
+          >
+            left
+          </button>
+          <button
+            onClick={() =>
+              pagination.page < Math.ceil(table.length / pagination.limit)
+                ? changePageCount(1)
+                : ""
+            }
+          >
+            right
+          </button>
+        </div>
+      </div>
     </>
   );
 };
