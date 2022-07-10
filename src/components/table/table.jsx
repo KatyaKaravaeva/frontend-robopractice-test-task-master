@@ -4,6 +4,8 @@ import "../../assets/styles/table.css";
 
 const Table = () => {
   const [search, setSearch] = useState("");
+  const [pagination, setPagination] = useState({limit: 10, page: 1});
+  const [sortTable, setSortTable] = useState(false);
 
   const { table } = useSelector((state) => state.table);
 
@@ -20,8 +22,8 @@ const Table = () => {
   };
 
   const checkSearch = (row) => {
-    if (row.Fullname.indexOf(search) !== -1){
-      return ( <tr key={row.id}>
+    if (row.Fullname.toLowerCase().indexOf(search.toLowerCase()) !== -1) {
+      return (<tr key={row.id}>
         <td>{row.Fullname}</td>
         {recieveTable(row.Days)}
       </tr>)
@@ -56,6 +58,10 @@ const Table = () => {
     return layout;
   };
 
+  const sortTableName = () => {
+    return sortTable ? setSortTable(false) : setSortTable(true)   
+  }
+
   return (
     <>
       <input
@@ -66,11 +72,11 @@ const Table = () => {
       <table>
         <thead>
           <tr>
-            <td>User</td>
+            <td><button onClick={() => sortTableName()}><div>User</div></button></td>
             {[...Array(31)].map((x, ind) => (
-              <td>{++ind}</td>
+              <td><div>{++ind}</div></td>
             ))}
-            <td>Monthly</td>
+            <td><div>Monthly</div></td>
           </tr>
         </thead>
         <tbody>{table.map((row) => checkSearch(row))}</tbody>
