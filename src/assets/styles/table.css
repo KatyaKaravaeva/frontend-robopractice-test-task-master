@@ -8,6 +8,7 @@ thead td {
   width: 30px;
   min-width: 30px;
   text-align: center;
+  background-color: rgb(250, 210, 242);
 }
 
 tbody td {
