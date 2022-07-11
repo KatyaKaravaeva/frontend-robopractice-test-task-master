@@ -6,8 +6,10 @@ const Table = () => {
   const [search, setSearch] = useState("");
   const [pagination, setPagination] = useState({ limit: 10, page: 1 });
   const [sortTableName, setSortTableName] = useState(false);
-  const [sortTableColumn, setSortTableColumn] = useState(null);
-  let index
+  const [sortTableColumn, setSortTableColumn] = useState({
+    active: false,
+    id: null,
+  });
 
   const { table } = useSelector((state) => state.table);
 
@@ -30,6 +32,10 @@ const Table = () => {
       ? (tableSort = table.slice().sort(sortArrayByName))
       : (tableSort = table);
 
+    sortTableColumn.id
+      ? (tableSort = table.slice().sort(sortArrayByColumn))
+      : (tableSort = table);
+
     return tableSort.map((row, index) => {
       if (
         row.Fullname.toLowerCase().indexOf(search.trim().toLowerCase()) !== -1
@@ -49,12 +55,74 @@ const Table = () => {
     });
   };
 
+  const checkIdChoose = (index) => {
+    if (index === sortTableColumn.id) {
+      return sortTableColumn.active
+        ? setSortTableColumn({ ...sortTableColumn, active: false })
+        : setSortTableColumn({ ...sortTableColumn, active: true });
+    } else {
+      return setSortTableColumn({ active: true, id: index });
+    }
+  };
+
   const sortArrayByName = (x, y) => {
     return x.Fullname.localeCompare(y.Fullname);
   };
 
   const sortArrayByColumn = (x, y) => {
-    return x.Days[index].Recieve.localeCompare(y.Days[index].Recieve);
+    let numberForSortX, numberForSortY;
+    x.Days.map((time, index) => {
+      if (Number(time.Date.split("-").pop()) === sortTableColumn.id) {
+        numberForSortX = index;
+      }
+    });
+
+    y.Days.map((time, index) => {
+      if (Number(time.Date.split("-").pop()) === sortTableColumn.id) {
+        numberForSortY = index;
+      }
+    });
+
+    let resX = "0:0";
+
+    if (x.Days[numberForSortX]) {
+      resX = getTime(
+        x.Days[numberForSortX].End,
+        x.Days[numberForSortX].Start,
+        x.Days[numberForSortX].Date
+      );
+    }
+
+    let totalX = Number(resX.split(":")[0]) * 60 + Number(resX.split(":")[1]);
+
+    let resY = "0:0";
+
+    if (y.Days[numberForSortY]) {
+      resY = getTime(
+        y.Days[numberForSortY].End,
+        y.Days[numberForSortY].Start,
+        y.Days[numberForSortY].Date
+      );
+    }
+
+    let totalY = Number(resY.split(":")[0]) * 60 + Number(resY.split(":")[1]);
+
+    if (sortTableColumn.active) {
+      if (totalX > totalY) {
+        return 1;
+      }
+      if (totalX < totalY) {
+        return -1;
+      }
+    } else {
+      if (totalX > totalY) {
+        return -1;
+      }
+      if (totalX < totalY) {
+        return 1;
+      }
+    }
+    return 0;
   };
 
   const recieveTable = (days) => {
@@ -70,7 +138,6 @@ const Table = () => {
           let timeRecieve = getTime(time.End, time.Start, time.Date);
           totalHours += Number(timeRecieve.split(":")[0]);
           totalMin += Number(timeRecieve.split(":")[1]);
-          table.Recieve = totalHours * 60 + totalMin;
           return layout.push(<td key={index}> {timeRecieve}</td>);
         }
       });
@@ -121,7 +188,7 @@ const Table = () => {
               </button>
             </td>
             {[...Array(31)].map((x, ind) => (
-              <td key={ind}>
+              <td key={ind} onClick={() => checkIdChoose(ind)}>
                 <div>{++ind}</div>
               </td>
             ))}
