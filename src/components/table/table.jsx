@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import "../../assets/styles/table.css";
 
 const Table = () => {
   const [search, setSearch] = useState("");
   const [pagination, setPagination] = useState({ limit: 10, page: 1 });
-  const [sortTable, setSortTable] = useState(false);
+  const [sortTableName, setSortTableName] = useState(false);
 
   const { table } = useSelector((state) => state.table);
 
@@ -21,27 +21,41 @@ const Table = () => {
     return hours + ":" + minutes;
   };
 
-  const checkSearch = (row, index) => {
-    if (row.Fullname.toLowerCase().indexOf(search.toLowerCase()) !== -1) {
-      //console.log(pagination.limit * (pagination.page - 1));
+  const checkSearch = () => {
+    let tableSort;
+
+    sortTableName
+      ? (tableSort = table.slice().sort(sortArrayByName))
+      : (tableSort = table);
+
+    return tableSort.map((row, index) => {
       if (
-        index <= pagination.limit * pagination.page &&
-        index >= pagination.limit * (pagination.page - 1)
-      )
-        return (
-          <tr key={row.id}>
-            <td>{row.Fullname}</td>
-            {recieveTable(row.Days)}
-          </tr>
-        );
-    }
-    return <></>;
+        row.Fullname.toLowerCase().indexOf(search.trim().toLowerCase()) !== -1
+      ) {
+        if (
+          index <= pagination.limit * pagination.page &&
+          index >= pagination.limit * (pagination.page - 1)
+        )
+          return (
+            <tr key={row.id}>
+              <td>{row.Fullname}</td>
+              {recieveTable(row.Days)}
+            </tr>
+          );
+      }
+      return <></>;
+    });
+  };
+
+  const sortArrayByName = (x, y) => {
+    return x.Fullname.localeCompare(y.Fullname);
   };
 
   const recieveTable = (days) => {
     let layout = [];
     let totalHours = 0;
     let totalMin = 0;
+    
     for (let day = 1; day <= 31; ++day) {
       let flag = false;
       days.map((time, index) => {
@@ -65,10 +79,6 @@ const Table = () => {
     return layout;
   };
 
-  const sortTableName = () => {
-    return sortTable ? setSortTable(false) : setSortTable(true);
-  };
-
   const changeLimitPagination = (target) => {
     setPagination({
       ...pagination,
@@ -82,11 +92,10 @@ const Table = () => {
       page: pagination.page + valPage,
     });
   };
-
   return (
     <>
       <input
-        placeholder="search"
+        placeholder="Search"
         value={search}
         onChange={(event) => setSearch(event.target.value)}
       />
@@ -94,7 +103,13 @@ const Table = () => {
         <thead>
           <tr>
             <td>
-              <button onClick={() => sortTableName()}>
+              <button
+                onClick={() =>
+                  sortTableName
+                    ? setSortTableName(false)
+                    : setSortTableName(true)
+                }
+              >
                 <div>User</div>
               </button>
             </td>
@@ -108,7 +123,7 @@ const Table = () => {
             </td>
           </tr>
         </thead>
-        <tbody>{table.map((row, index) => checkSearch(row, index))}</tbody>
+        <tbody>{checkSearch()}</tbody>
       </table>
       <div className="pagination">
         <div className="pagination-select">
@@ -125,18 +140,23 @@ const Table = () => {
             {pagination.limit * pagination.page} of {table.length}
           </p>
           <button
+            className={`button-left ${pagination.page > 1 ? "" : "disabled"}`}
             onClick={() => (pagination.page > 1 ? changePageCount(-1) : "")}
           >
-            left
+            <span></span>
           </button>
           <button
+            className={`button-right ${pagination.page < Math.ceil(table.length / pagination.limit)
+                ? " "
+                : "disabled"
+              }`}
             onClick={() =>
               pagination.page < Math.ceil(table.length / pagination.limit)
                 ? changePageCount(1)
                 : ""
             }
           >
-            right
+            <span></span>
           </button>
         </div>
       </div>

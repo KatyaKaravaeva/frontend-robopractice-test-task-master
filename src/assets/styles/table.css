@@ -1,14 +1,20 @@
-table,
-tr {
+table tr {
   border-collapse: collapse;
   border: 1px solid rgb(163, 163, 163);
 }
+
+table {
+  border-collapse: collapse;
+  border: 1px solid rgb(133, 133, 133);
+}
+
 thead td {
   padding: 20px;
   width: 30px;
   min-width: 30px;
   text-align: center;
   background-color: rgb(250, 210, 242);
+  cursor: pointer;
 }
 
 tbody td {
@@ -16,6 +22,7 @@ tbody td {
   text-align: right;
   background-color: rgb(244, 229, 241);
 }
+
 table td:first-child {
   text-align: left;
   left: 0;
@@ -56,13 +63,10 @@ td div {
 input {
   background: white;
   color: black;
-  border-radius: 10px;
   padding: 5px;
-  border-color: black;
-}
-
-input:focus {
-  border-color: rgb(182, 182, 182);
+  border: unset;
+  border-bottom: 1px solid black;
+    outline: none;
 }
 
 button {
@@ -89,9 +93,40 @@ button {
 
 .pagination-page button {
   margin-left: 10px;
+}
+
+select {
+  border: unset;
+  cursor: pointer;
+}
+.button-left{
+
+}
+
+.button-right{
+  width: 40px;
+  mask-position: 100%;
+  display: block;
+  mask-repeat: no-repeat;
+  mask-size: 100%;
+  transform: rotate(270deg);
+  mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDhweCIgdmlld0JveD0iMCAwIDI0IDI0IiB3aWR0aD0iNDhweCIgZmlsbD0iIzAwMDAwMCI+PHBhdGggZD0iTTI0IDI0SDBWMGgyNHYyNHoiIGZpbGw9Im5vbmUiIG9wYWNpdHk9Ii44NyIvPjxwYXRoIGQ9Ik0xNi41OSA4LjU5TDEyIDEzLjE3IDcuNDEgOC41OSA2IDEwbDYgNiA2LTYtMS40MS0xLjQxeiIvPjwvc3ZnPg==");
+  background-color: black;
+}
+
+.button-right.disabled,
+.button-left.disabled {
+  pointer-events: none;
   background-color: gray;
-  color: white;
-  border-radius: 20px;
-  padding: 5px;
-  width: 50px;
+}
+
+.button-left{
+  width: 40px;
+  mask-position: 100%;
+  display: block;
+  mask-repeat: no-repeat;
+  mask-size: 100%;
+  transform: rotate(90deg);
+  mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDhweCIgdmlld0JveD0iMCAwIDI0IDI0IiB3aWR0aD0iNDhweCIgZmlsbD0iIzAwMDAwMCI+PHBhdGggZD0iTTI0IDI0SDBWMGgyNHYyNHoiIGZpbGw9Im5vbmUiIG9wYWNpdHk9Ii44NyIvPjxwYXRoIGQ9Ik0xNi41OSA4LjU5TDEyIDEzLjE3IDcuNDEgOC41OSA2IDEwbDYgNiA2LTYtMS40MS0xLjQxeiIvPjwvc3ZnPg==");
+  background-color: black;
 }
