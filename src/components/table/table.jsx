@@ -28,13 +28,13 @@ const Table = () => {
   const checkSearch = () => {
     let tableSort;
 
-    sortTableName
-      ? (tableSort = table.slice().sort(sortArrayByName))
-      : (tableSort = table);
-
-    sortTableColumn.id
-      ? (tableSort = table.slice().sort(sortArrayByColumn))
-      : (tableSort = table);
+    if (sortTableName) {
+      tableSort = table.slice().sort(sortArrayByName);
+    } else if (sortTableColumn.id) {
+      tableSort = table.slice().sort(sortArrayByColumn);
+    } else {
+      tableSort = table;
+    }
 
     return tableSort.map((row, index) => {
       if (
@@ -56,6 +56,8 @@ const Table = () => {
   };
 
   const checkIdChoose = (index) => {
+    setSortTableName(false);
+
     if (index === sortTableColumn.id) {
       return sortTableColumn.active
         ? setSortTableColumn({ ...sortTableColumn, active: false })
@@ -125,15 +127,19 @@ const Table = () => {
     return 0;
   };
 
+  const sortTableByName = () => {
+    setSortTableColumn({ active: false, id: null });
+    sortTableName ? setSortTableName(false) : setSortTableName(true);
+  };
+
   const recieveTable = (days) => {
     let layout = [];
     let totalHours = 0;
     let totalMin = 0;
-
     for (let day = 1; day <= 31; ++day) {
       let flag = false;
       days.map((time, index) => {
-        if (Number(time.Date.split("-").pop()) == day) {
+        if (Number(time.Date.split("-").pop()) === day) {
           flag = true;
           let timeRecieve = getTime(time.End, time.Start, time.Date);
           totalHours += Number(timeRecieve.split(":")[0]);
@@ -177,13 +183,7 @@ const Table = () => {
         <thead>
           <tr>
             <td>
-              <button
-                onClick={() =>
-                  sortTableName
-                    ? setSortTableName(false)
-                    : setSortTableName(true)
-                }
-              >
+              <button onClick={() => sortTableByName()}>
                 <div>User</div>
               </button>
             </td>
