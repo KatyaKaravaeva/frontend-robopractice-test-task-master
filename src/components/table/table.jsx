@@ -36,6 +36,9 @@ const Table = () => {
       tableSort = table;
     }
 
+    if (search.trim().toLowerCase()) {
+      tableSort = sortBySearchName(tableSort);
+    }
     return tableSort.map((row, index) => {
       if (
         row.Fullname.toLowerCase().indexOf(search.trim().toLowerCase()) !== -1
@@ -52,6 +55,16 @@ const Table = () => {
           );
       }
       return <></>;
+    });
+  };
+
+  const sortBySearchName = (tableSort) => {
+    return tableSort.filter((row) => {
+      if (
+        row.Fullname.toLowerCase().indexOf(search.trim().toLowerCase()) !== -1
+      ) {
+        return row;
+      }
     });
   };
 
