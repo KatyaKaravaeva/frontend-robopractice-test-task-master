@@ -6,6 +6,7 @@ const Table = () => {
   const [search, setSearch] = useState("");
   const [pagination, setPagination] = useState({ limit: 10, page: 1 });
   const [sortTableName, setSortTableName] = useState(false);
+  const [sortTableColumn, setSortTableColumn] = useState(null)
 
   const { table } = useSelector((state) => state.table);
 
@@ -50,6 +51,10 @@ const Table = () => {
   const sortArrayByName = (x, y) => {
     return x.Fullname.localeCompare(y.Fullname);
   };
+
+  const sortArrayByColumn = (x,y) => {
+    
+  }
 
   const recieveTable = (days) => {
     let layout = [];
