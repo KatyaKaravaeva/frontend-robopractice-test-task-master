@@ -41,19 +41,16 @@ const Table = () => {
     }
     return tableSort.map((row, index) => {
       if (
-        row.Fullname.toLowerCase().indexOf(search.trim().toLowerCase()) !== -1
-      ) {
-        if (
-          index <= pagination.limit * pagination.page &&
-          index >= pagination.limit * (pagination.page - 1)
-        )
-          return (
-            <tr key={row.id}>
-              <td>{row.Fullname}</td>
-              {recieveTable(row.Days)}
-            </tr>
-          );
-      }
+        index <= pagination.limit * pagination.page &&
+        index >= pagination.limit * (pagination.page - 1)
+      )
+        return (
+          <tr key={row.id}>
+            <td>{row.Fullname}</td>
+            {recieveTable(row.Days)}
+          </tr>
+        );
+
       return <></>;
     });
   };
