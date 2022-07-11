@@ -6,7 +6,8 @@ const Table = () => {
   const [search, setSearch] = useState("");
   const [pagination, setPagination] = useState({ limit: 10, page: 1 });
   const [sortTableName, setSortTableName] = useState(false);
-  const [sortTableColumn, setSortTableColumn] = useState(null)
+  const [sortTableColumn, setSortTableColumn] = useState(null);
+  let index
 
   const { table } = useSelector((state) => state.table);
 
@@ -52,15 +53,15 @@ const Table = () => {
     return x.Fullname.localeCompare(y.Fullname);
   };
 
-  const sortArrayByColumn = (x,y) => {
-    
-  }
+  const sortArrayByColumn = (x, y) => {
+    return x.Days[index].Recieve.localeCompare(y.Days[index].Recieve);
+  };
 
   const recieveTable = (days) => {
     let layout = [];
     let totalHours = 0;
     let totalMin = 0;
-    
+
     for (let day = 1; day <= 31; ++day) {
       let flag = false;
       days.map((time, index) => {
@@ -69,6 +70,7 @@ const Table = () => {
           let timeRecieve = getTime(time.End, time.Start, time.Date);
           totalHours += Number(timeRecieve.split(":")[0]);
           totalMin += Number(timeRecieve.split(":")[1]);
+          table.Recieve = totalHours * 60 + totalMin;
           return layout.push(<td key={index}> {timeRecieve}</td>);
         }
       });
@@ -151,10 +153,11 @@ const Table = () => {
             <span></span>
           </button>
           <button
-            className={`button-right ${pagination.page < Math.ceil(table.length / pagination.limit)
+            className={`button-right ${
+              pagination.page < Math.ceil(table.length / pagination.limit)
                 ? " "
                 : "disabled"
-              }`}
+            }`}
             onClick={() =>
               pagination.page < Math.ceil(table.length / pagination.limit)
                 ? changePageCount(1)
